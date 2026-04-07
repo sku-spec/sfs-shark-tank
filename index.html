@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SFS Shark Tank Remix</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;600;700;900&display=swap');
+
+  :root {
+    --gold: #f5c518;
+    --dark-gold: #c9a000;
+    --navy: #0a0f2c;
+    --blue: #0d1b4b;
+    --shark: #1a2a6c;
+    --red: #e63946;
+    --green: #2dc653;
+    --white: #f0f4ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--navy);
+    color: var(--white);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* BACKGROUND WAVES */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(29,78,216,.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(245,197,24,.07) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, #000814 0%, #001d3d 50%, #000814 100%);
+    border-bottom: 3px solid var(--gold);
+    padding: 28px 0 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  header::after {
+    content: '🦈';
+    position: absolute;
+    font-size: 200px;
+    opacity: .04;
+    top: -40px;
+    left: 50%;
+    transform: translateX(-50%);
+    pointer-events: none;
+  }
+
+  .show-badge {
+    display: inline-block;
+    background: var(--gold);
+    color: #000;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 2px;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(42px, 8vw, 80px);
+    letter-spacing: 4px;
+    line-height: 1;
+    color: var(--white);
+    text-shadow: 0 0 40px rgba(245,197,24,.4);
+  }
+
+  h1 span { color: var(--gold); }
+
+  .subtitle {
+    margin-top: 8px;
+    color: #8899cc;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* NAV TABS */
+  nav {
+    background: rgba(0,0,0,.4);
+    border-bottom: 1px solid rgba(245,197,24,.2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+
+  nav .wrap { display: flex; gap: 0; }
+
+  nav button {
+    background: none;
+    border: none;
+    color: #8899cc;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 16px 24px;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all .2s;
+  }
+
+  nav button:hover { color: var(--white); }
+  nav button.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+  /* PAGES */
+  .page { display: none; padding: 40px 0 60px; }
+  .page.active { display: block; }
+
+  /* SECTION TITLES */
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    letter-spacing: 3px;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .section-sub {
+    color: #8899cc;
+    font-size: 13px;
+    margin-bottom: 28px;
+    letter-spacing: 1px;
+  }
+
+  /* PHASE TIMELINE */
+  .timeline {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 40px;
+  }
+
+  .phase-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 10px;
+    padding: 18px;
+    position: relative;
+    transition: border-color .2s;
+  }
+
+  .phase-card.current {
+    border-color: var(--gold);
+    background: rgba(245,197,24,.06);
+  }
+
+  .phase-card.done {
+    opacity: .5;
+  }
+
+  .phase-time {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    color: var(--gold);
+    letter-spacing: 1px;
+  }
+
+  .phase-name {
+    font-size: 13px;
+    font-weight: 700;
+    margin: 4px 0 2px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .phase-desc { font-size: 12px; color: #8899cc; }
+
+  .phase-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--gold);
+    color: #000;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 20px;
+    letter-spacing: 1px;
+  }
+
+  /* TIMER */
+  .timer-box {
+    background: linear-gradient(135deg, #000814, #001233);
+    border: 2px solid var(--gold);
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 32px;
+    box-shadow: 0 0 40px rgba(245,197,24,.15);
+  }
+
+  .timer-label {
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #8899cc;
+    margin-bottom: 8px;
+  }
+
+  .timer-display {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(60px, 12vw, 100px);
+    color: var(--gold);
+    letter-spacing: 6px;
+    line-height: 1;
+    text-shadow: 0 0 30px rgba(245,197,24,.5);
+    transition: color .3s;
+  }
+
+  .timer-display.warning { color: #ff6b35; text-shadow: 0 0 30px rgba(255,107,53,.5); }
+  .timer-display.danger { color: var(--red); text-shadow: 0 0 30px rgba(230,57,70,.5); animation: pulse 1s infinite; }
+
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .6; } }
+
+  .timer-phase-name {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 8px;
+    color: var(--white);
+  }
+
+  .timer-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 12px 28px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all .2s;
+  }
+
+  .btn-gold { background: var(--gold); color: #000; }
+  .btn-gold:hover { background: var(--dark-gold); transform: translateY(-1px); }
+  .btn-outline { background: transparent; border: 2px solid rgba(255,255,255,.2); color: var(--white); }
+  .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
+  .btn-red { background: var(--red); color: #fff; }
+  .btn-red:hover { background: #c1121f; }
+
+  /* PHASE SELECTOR */
+  .phase-selector {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+
+  .phase-btn {
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.15);
+    color: #8899cc;
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all .2s;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: .5px;
+  }
+
+  .phase-btn:hover, .phase-btn.active {
+    background: rgba(245,197,24,.12);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  /* TEAMS GRID */
+  .teams-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  .team-card {
+    background: linear-gradient(145deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
+  }
+
+  .team-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,.4); }
+
+  .team-card:nth-child(1) { border-top: 3px solid #3b82f6; }
+  .team-card:nth-child(2) { border-top: 3px solid #a855f7; }
+  .team-card:nth-child(3) { border-top: 3px solid var(--gold); }
+
+  .team-header {
+    padding: 20px 20px 14px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .team-emoji { font-size: 32px; }
+
+  .team-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 24px;
+    letter-spacing: 2px;
+    line-height: 1.1;
+  }
+
+  .team-card:nth-child(1) .team-name { color: #93c5fd; }
+  .team-card:nth-child(2) .team-name { color: #d8b4fe; }
+  .team-card:nth-child(3) .team-name { color: var(--gold); }
+
+  .team-members {
+    padding: 0 20px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .member {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 12px;
+    background: rgba(255,255,255,.04);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .member-info { display: flex; flex-direction: column; gap: 2px; }
+  .member-name { font-size: 14px; font-weight: 600; }
+  .member-bio { font-size: 11px; color: #8899cc; line-height: 1.4; font-weight: 400; }
+
+  .member-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .team-card:nth-child(1) .member-avatar { background: rgba(59,130,246,.3); color: #93c5fd; }
+  .team-card:nth-child(2) .member-avatar { background: rgba(168,85,247,.3); color: #d8b4fe; }
+  .team-card:nth-child(3) .member-avatar { background: rgba(245,197,24,.2); color: var(--gold); }
+
+  /* JUDGES */
+  .judges-row {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+  }
+
+  .judge-card {
+    background: linear-gradient(135deg, rgba(245,197,24,.1), rgba(245,197,24,.03));
+    border: 1px solid rgba(245,197,24,.3);
+    border-radius: 10px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .judge-shark { font-size: 28px; }
+  .judge-name { font-weight: 700; font-size: 15px; }
+  .judge-title { font-size: 11px; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
+  .judge-bio { font-size: 12px; color: #8899cc; line-height: 1.5; max-width: 280px; }
+
+  /* SCORING PAGE */
+  .scoring-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .scoring-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 14px;
+    padding: 24px;
+  }
+
+  .scoring-card-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  .scoring-team-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 26px;
+    letter-spacing: 2px;
+  }
+
+  .scoring-categories {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .score-input-group { display: flex; flex-direction: column; gap: 6px; }
+
+  .score-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #8899cc;
+  }
+
+  .score-stars {
+    display: flex;
+    gap: 4px;
+  }
+
+  .star {
+    width: 36px;
+    height: 36px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all .15s;
+    user-select: none;
+  }
+
+  .star:hover, .star.active { background: rgba(245,197,24,.2); border-color: var(--gold); }
+  .star.active { background: var(--gold); color: #000; }
+
+  .judge-section { margin-bottom: 20px; }
+
+  .judge-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(245,197,24,.2);
+  }
+
+  .team-total {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: rgba(245,197,24,.08);
+    border: 1px solid rgba(245,197,24,.2);
+    border-radius: 8px;
+    margin-top: 8px;
+  }
+
+  .team-total-label { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+  .team-total-score { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: var(--gold); letter-spacing: 2px; }
+
+  /* LEADERBOARD */
+  .leaderboard {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .lb-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+    transition: all .3s;
+  }
+
+  .lb-row.first {
+    background: linear-gradient(135deg, rgba(245,197,24,.12), rgba(245,197,24,.04));
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(245,197,24,.1);
+  }
+
+  .lb-rank {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 36px;
+    width: 40px;
+    text-align: center;
+    line-height: 1;
+  }
+
+  .lb-row.first .lb-rank { color: var(--gold); }
+  .lb-row:not(.first) .lb-rank { color: #4a5a8a; }
+
+  .lb-team { flex: 1; }
+  .lb-team-name { font-weight: 700; font-size: 16px; }
+  .lb-team-members { font-size: 12px; color: #8899cc; margin-top: 2px; }
+
+  .lb-score {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 42px;
+    color: var(--white);
+    letter-spacing: 2px;
+  }
+
+  .lb-row.first .lb-score { color: var(--gold); }
+
+  .lb-breakdown {
+    font-size: 11px;
+    color: #8899cc;
+    text-align: right;
+  }
+
+  /* WINNER BANNER */
+  .winner-banner {
+    background: linear-gradient(135deg, #1a1200, #2d1f00, #1a1200);
+    border: 2px solid var(--gold);
+    border-radius: 16px;
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 32px;
+    display: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .winner-banner.show { display: block; }
+
+  .winner-banner::before {
+    content: '🏆';
+    position: absolute;
+    font-size: 120px;
+    opacity: .08;
+    top: -20px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .winner-label {
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+  }
+
+  .winner-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(36px, 7vw, 64px);
+    color: var(--gold);
+    letter-spacing: 4px;
+    text-shadow: 0 0 30px rgba(245,197,24,.6);
+  }
+
+  .winner-score { font-size: 16px; color: #8899cc; margin-top: 6px; }
+
+  /* RULES PAGE */
+  .rules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .rule-card {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+    padding: 20px;
+  }
+
+  .rule-icon { font-size: 28px; margin-bottom: 10px; }
+  .rule-title { font-weight: 700; font-size: 15px; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .rule-body { font-size: 13px; color: #8899cc; line-height: 1.6; }
+  .rule-body li { margin-bottom: 4px; }
+
+  /* PROMPTS */
+  .prompt-box {
+    background: linear-gradient(135deg, rgba(29,78,216,.12), rgba(29,78,216,.04));
+    border: 1px solid rgba(59,130,246,.3);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+
+  .prompt-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #60a5fa;
+    margin-bottom: 12px;
+  }
+
+  .prompt-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .prompt-list li {
+    font-size: 14px;
+    color: var(--white);
+    padding: 8px 14px;
+    background: rgba(255,255,255,.04);
+    border-radius: 6px;
+    border-left: 3px solid #3b82f6;
+  }
+
+  /* CONFETTI */
+  .confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    top: -20px;
+    animation: confetti-fall linear forwards;
+    z-index: 9999;
+    pointer-events: none;
+  }
+
+  @keyframes confetti-fall {
+    to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .scoring-categories { grid-template-columns: 1fr; }
+    nav button { padding: 14px 14px; font-size: 11px; }
+    .star { width: 30px; height: 30px; font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="show-badge">SFS Operations Presents</div>
+    <h1>🦈 SHARK TANK <span>REMIX</span></h1>
+    <p class="subtitle">SFS Leads Edition &nbsp;•&nbsp; 60 Minutes &nbsp;•&nbsp; 3 Teams &nbsp;•&nbsp; 1 Winner</p>
+  </div>
+</header>
+
+<nav>
+  <div class="wrap">
+    <button class="active" onclick="showPage('overview')">Overview</button>
+    <button onclick="showPage('teams')">Teams</button>
+    <button onclick="showPage('timer')">Timer</button>
+    <button onclick="showPage('scoring')">Scoring</button>
+    <button onclick="showPage('leaderboard')">Leaderboard</button>
+    <button onclick="showPage('rules')">Rules</button>
+  </div>
+</nav>
+
+<div class="wrap">
+
+  <!-- OVERVIEW PAGE -->
+  <div id="page-overview" class="page active">
+    <div class="section-title">🎬 Game Overview</div>
+    <p class="section-sub">How the next 60 minutes go down</p>
+
+    <div class="timeline">
+      <div class="phase-card" id="phase0">
+        <div class="phase-time">0:00</div>
+        <div class="phase-name">Icebreaker</div>
+        <div class="phase-desc">Worst product you've ever bought. Go.</div>
+      </div>
+      <div class="phase-card" id="phase1">
+        <div class="phase-time">5:00</div>
+        <div class="phase-name">Build Phase</div>
+        <div class="phase-desc">Teams invent their product. 15 minutes. Clock is ticking.</div>
+      </div>
+      <div class="phase-card" id="phase2">
+        <div class="phase-time">20:00</div>
+        <div class="phase-name">Pitch 1 — Loan Wolves</div>
+        <div class="phase-desc">2 min pitch · 5 min Shark Q&A · 3 min scoring</div>
+      </div>
+      <div class="phase-card" id="phase3">
+        <div class="phase-time">30:00</div>
+        <div class="phase-name">Pitch 2 — Loan Rangers</div>
+        <div class="phase-desc">2 min pitch · 5 min Shark Q&A · 3 min scoring</div>
+      </div>
+      <div class="phase-card" id="phase4">
+        <div class="phase-time">40:00</div>
+        <div class="phase-name">Pitch 3 — Here To APR-ty</div>
+        <div class="phase-desc">2 min pitch · 5 min Shark Q&A · 3 min scoring</div>
+      </div>
+      <div class="phase-card" id="phase5">
+        <div class="phase-time">50:00</div>
+        <div class="phase-name">Results</div>
+        <div class="phase-desc">Scores tallied. Winner crowned. Bragging rights eternal.</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:32px">🦈 The Sharks</div>
+    <p class="section-sub">These three decide your fate</p>
+
+    <div class="judges-row">
+      <div class="judge-card">
+        <div class="judge-shark">🦈</div>
+        <div>
+          <div class="judge-name">Richard Rosenthal</div>
+          <div class="judge-title">CEO, Square Financial Services</div>
+          <div class="judge-bio">Started his first business at age 9 selling "pre-approved" lemonade with a 12% APR. By 22 he had cornered the market on artisanal overdraft fees. Today Richard controls a $4.2B financial empire and owns a private island he financed through Square Capital. Has appeared on the cover of <em>Forbes</em> three times — once by accident. His golden rule: if the unit economics don't work on a napkin, they don't work.</div>
+        </div>
+      </div>
+      <div class="judge-card">
+        <div class="judge-shark">🦈</div>
+        <div>
+          <div class="judge-name">Naomi Whittenberg</div>
+          <div class="judge-title">Executive Operations</div>
+          <div class="judge-bio">Built her first operational framework at age 7 to manage her siblings' chore schedules — it had KPIs. Went on to optimize three Fortune 500 companies before breakfast and once turned around a failing startup just by reorganizing their Slack channels. Named "Most Likely to Have Already Thought of That" four years running. Currently valued at an undisclosed amount, all of it earned through sheer operational excellence and one very well-timed pivot.</div>
+        </div>
+      </div>
+      <div class="judge-card">
+        <div class="judge-shark">🦈</div>
+        <div>
+          <div class="judge-name">Sam Ku</div>
+          <div class="judge-title">COO, Square Financial Services · Host</div>
+          <div class="judge-bio">Before fintech, Sam made her first fortune inventing the reversible coaster — a coaster with a slightly different coaster on the back. Sold 14 million units in 11 countries. Nobody knows why it worked. Sam does, but she's not telling. Used the proceeds to pivot into financial services, where she proceeded to build an entirely different kind of empire. Now COO of Square Financial Services and the only person in history to have disrupted both the beverage accessory and banking industries. Today she's here to decide if your idea is the next reversible coaster — or just a regular coaster.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEAMS PAGE -->
+  <div id="page-teams" class="page">
+    <div class="section-title">🏊 The Teams</div>
+    <p class="section-sub">Three teams. One winner. No refunds.</p>
+
+    <div class="teams-grid">
+      <div class="team-card">
+        <div class="team-header">
+          <div class="team-emoji">🐺</div>
+          <div>
+            <div class="team-name">Loan Wolves</div>
+            <div style="font-size:12px;color:#8899cc">Team 1</div>
+          </div>
+        </div>
+        <div class="team-members">
+          <div class="member"><div class="member-avatar">MW</div><div class="member-info"><div class="member-name">Maddie Whelan</div><div class="member-bio">Once won a staring contest against a spreadsheet. The spreadsheet blinked first.</div></div></div>
+          <div class="member"><div class="member-avatar">GL</div><div class="member-info"><div class="member-name">Guelmis Losa</div><div class="member-bio">Holds the office record for most problems solved before 9am. Current streak: 47 days.</div></div></div>
+          <div class="member"><div class="member-avatar">JR</div><div class="member-info"><div class="member-name">Joe Rice</div><div class="member-bio">Former competitive chess player. Treats every meeting like it's the final round. Has never lost a negotiation or a parking spot.</div></div></div>
+          <div class="member"><div class="member-avatar">JW</div><div class="member-info"><div class="member-name">Jonathan Wolter</div><div class="member-bio">Once gave a presentation so compelling that three people in the audience changed careers on the spot.</div></div></div>
+          <div class="member"><div class="member-avatar">AB</div><div class="member-info"><div class="member-name">Ana Lynn Bukberg</div><div class="member-bio">Has a gift for making complex things simple and simple things sound extremely impressive.</div></div></div>
+        </div>
+      </div>
+
+      <div class="team-card">
+        <div class="team-header">
+          <div class="team-emoji">🤠</div>
+          <div>
+            <div class="team-name">Loan Rangers</div>
+            <div style="font-size:12px;color:#8899cc">Team 2</div>
+          </div>
+        </div>
+        <div class="team-members">
+          <div class="member"><div class="member-avatar">AD</div><div class="member-info"><div class="member-name">Alex Dixon</div><div class="member-bio">Attempted to patent the concept of "having a plan B." Was denied, but respected for trying.</div></div></div>
+          <div class="member"><div class="member-avatar">SB</div><div class="member-info"><div class="member-name">Shawn Brock</div><div class="member-bio">Speaks fluent sarcasm but always gets results. Nobody is entirely sure how. Not even Shawn.</div></div></div>
+          <div class="member"><div class="member-avatar">KJ</div><div class="member-info"><div class="member-name">Kesli Jensen</div><div class="member-bio">Has a sixth sense for when a project is about to go off the rails — and a seventh sense for fixing it quietly before anyone notices.</div></div></div>
+          <div class="member"><div class="member-avatar">JJ</div><div class="member-info"><div class="member-name">Jessica Jiang</div><div class="member-bio">Once turned a 47-slide deck into a 3-slide deck and somehow conveyed more information. A hero to many.</div></div></div>
+          <div class="member"><div class="member-avatar">HQ</div><div class="member-info"><div class="member-name">Heather Quinn</div><div class="member-bio">Brings the energy of someone who just had a great idea in the shower — because she did, and it's good.</div></div></div>
+        </div>
+      </div>
+
+      <div class="team-card">
+        <div class="team-header">
+          <div class="team-emoji">🎉</div>
+          <div>
+            <div class="team-name">Here To APR-ty</div>
+            <div style="font-size:12px;color:#8899cc">Team 3</div>
+          </div>
+        </div>
+        <div class="team-members">
+          <div class="member"><div class="member-avatar">AS</div><div class="member-info"><div class="member-name">Aprille Savarese</div><div class="member-bio">Once walked into a room with no plan and left with three signed agreements and a fruit basket.</div></div></div>
+          <div class="member"><div class="member-avatar">HK</div><div class="member-info"><div class="member-name">Harry Kastenbaum</div><div class="member-bio">Described by colleagues as "the guy who asks the question everyone was thinking but was too scared to ask." Chaos ensues. Problems get solved.</div></div></div>
+          <div class="member"><div class="member-avatar">MA</div><div class="member-info"><div class="member-name">Mike Althouse</div><div class="member-bio">Trained in the ancient art of making people feel heard while simultaneously moving the conversation 10 steps forward.</div></div></div>
+          <div class="member"><div class="member-avatar">BP</div><div class="member-info"><div class="member-name">Benjamin Ponedel</div><div class="member-bio">Holds an unofficial world record for the fastest time between "we have a problem" and "problem solved." Currently undefeated.</div></div></div>
+          <div class="member"><div class="member-avatar">GL</div><div class="member-info"><div class="member-name">Gregory Lynn</div><div class="member-bio">Once suggested a process improvement as a joke. It was implemented company-wide within the month.</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TIMER PAGE -->
+  <div id="page-timer" class="page">
+    <div class="section-title">⏱ Timer</div>
+    <p class="section-sub">Select a phase and hit start</p>
+
+    <div class="phase-selector">
+      <button class="phase-btn active" onclick="setPhase(0)">Icebreaker (5m)</button>
+      <button class="phase-btn" onclick="setPhase(1)">Build Phase (15m)</button>
+      <button class="phase-btn" onclick="setPhase(2)">Pitch 1 (10m)</button>
+      <button class="phase-btn" onclick="setPhase(3)">Pitch 2 (10m)</button>
+      <button class="phase-btn" onclick="setPhase(4)">Pitch 3 (10m)</button>
+      <button class="phase-btn" onclick="setPhase(5)">Results (10m)</button>
+    </div>
+
+    <div class="timer-box">
+      <div class="timer-label">Time Remaining</div>
+      <div class="timer-display" id="timerDisplay">5:00</div>
+      <div class="timer-phase-name" id="timerPhaseName">Icebreaker</div>
+      <div class="timer-buttons">
+        <button class="btn btn-gold" onclick="startTimer()" id="startBtn">▶ Start</button>
+        <button class="btn btn-outline" onclick="pauseTimer()">⏸ Pause</button>
+        <button class="btn btn-outline" onclick="resetTimer()">↺ Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCORING PAGE -->
+  <div id="page-scoring" class="page">
+    <div class="section-title">📊 Live Scoring</div>
+    <p class="section-sub">Each Shark scores 1–5 on three categories per team</p>
+
+    <div class="scoring-grid" id="scoringGrid"></div>
+  </div>
+
+  <!-- LEADERBOARD PAGE -->
+  <div id="page-leaderboard" class="page">
+    <div class="section-title">🏆 Leaderboard</div>
+    <p class="section-sub">Scores update live as Sharks vote</p>
+
+    <div class="winner-banner" id="winnerBanner">
+      <div class="winner-label">🎉 And the winner is...</div>
+      <div class="winner-name" id="winnerName">—</div>
+      <div class="winner-score" id="winnerScore"></div>
+    </div>
+
+    <div class="leaderboard" id="leaderboard"></div>
+
+    <div style="text-align:center;margin-top:24px">
+      <button class="btn btn-gold" onclick="triggerConfetti()">🎉 Celebrate!</button>
+      <button class="btn btn-outline" style="margin-left:12px" onclick="resetAll()">Reset All Scores</button>
+    </div>
+  </div>
+
+  <!-- RULES PAGE -->
+  <div id="page-rules" class="page">
+    <div class="section-title">📋 Rules</div>
+    <p class="section-sub">Everything you need to know to play</p>
+
+    <div class="rules-grid">
+      <div class="rule-card">
+        <div class="rule-icon">🧠</div>
+        <div class="rule-title">Build Your Product</div>
+        <div class="rule-body">
+          <ul>
+            <li>You have <strong>15 minutes</strong> to invent a fake product</li>
+            <li>Must include: name, what it does, price point, and tagline</li>
+            <li>The more absurd, the better</li>
+            <li>Use anything in the room as a prop</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">🎤</div>
+        <div class="rule-title">The Pitch</div>
+        <div class="rule-body">
+          <ul>
+            <li><strong>2 min</strong> — pitch to the Sharks</li>
+            <li><strong>5 min</strong> — Sharks ask questions</li>
+            <li><strong>3 min</strong> — Sharks score</li>
+            <li>All team members must participate</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">🦈</div>
+        <div class="rule-title">Scoring</div>
+        <div class="rule-body">
+          <ul>
+            <li>Each Shark scores 1–5 on three categories</li>
+            <li><strong>Creativity</strong> — how original is the idea?</li>
+            <li><strong>Pitch Energy</strong> — did they sell it?</li>
+            <li><strong>Would You Invest?</strong> — gut feel</li>
+            <li>Max score per team: 45 points</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="rule-card">
+        <div class="rule-icon">⚡</div>
+        <div class="rule-title">Facilitator Powers</div>
+        <div class="rule-body">
+          <ul>
+            <li>Can add a silly constraint at any time</li>
+            <li>Can extend or shorten any phase</li>
+            <li>Can veto a score if too generous or too harsh</li>
+            <li>Final ruling on all disputes</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="prompt-box">
+      <div class="prompt-label">💡 Prompts If Teams Get Stuck</div>
+      <ul class="prompt-list">
+        <li>"A subscription service for..."</li>
+        <li>"An app that helps executives..."</li>
+        <li>"A device that solves the problem of..."</li>
+        <li>"A fintech product that finally fixes..."</li>
+        <li>"A Square product for people who..."</li>
+      </ul>
+    </div>
+
+    <div class="prompt-box" style="background:linear-gradient(135deg,rgba(168,85,247,.1),rgba(168,85,247,.03));border-color:rgba(168,85,247,.3)">
+      <div class="prompt-label" style="color:#c084fc">⚡ Silly Constraints (Use If They're Too Serious)</div>
+      <ul class="prompt-list">
+        <li>Your product must be pink and solve a problem only left-handed people have</li>
+        <li>Your entire pitch must be delivered as a rap</li>
+        <li>Your product name must be a pun</li>
+        <li>You must use at least one object from the room as a demo</li>
+      </ul>
+    </div>
+  </div>
+
+</div><!-- end wrap -->
+
+<script>
+// ─── DATA ───────────────────────────────────────────────
+const TEAMS = [
+  { name: 'Loan Wolves', emoji: '🐺', members: ['Maddie Whelan','Guelmis Losa','Joe Rice','Jonathan Wolter','Ana Lynn Bukberg'] },
+  { name: 'Loan Rangers', emoji: '🤠', members: ['Alex Dixon','Shawn Brock','Kesli Jensen','Jessica Jiang','Heather Quinn'] },
+  { name: 'Here To APR-ty', emoji: '🎉', members: ['Aprille Savarese','Harry Kastenbaum','Mike Althouse','Benjamin Ponedel','Gregory Lynn'] },
+];
+
+const JUDGES = ['Richard', 'Naomi', 'Sam'];
+const CATEGORIES = ['Creativity', 'Pitch Energy', 'Would You Invest?'];
+
+// scores[teamIdx][judgeIdx][catIdx] = 0-5
+let scores = TEAMS.map(() => JUDGES.map(() => CATEGORIES.map(() => 0)));
+
+// ─── TIMER ──────────────────────────────────────────────
+const PHASES = [
+  { name: 'Icebreaker', duration: 5 * 60 },
+  { name: 'Build Phase', duration: 15 * 60 },
+  { name: 'Pitch 1 — Loan Wolves', duration: 10 * 60 },
+  { name: 'Pitch 2 — Loan Rangers', duration: 10 * 60 },
+  { name: 'Pitch 3 — Here To APR-ty', duration: 10 * 60 },
+  { name: 'Results', duration: 10 * 60 },
+];
+
+let currentPhase = 0;
+let timeLeft = PHASES[0].duration;
+let timerRunning = false;
+let timerInterval = null;
+
+function setPhase(idx) {
+  currentPhase = idx;
+  timeLeft = PHASES[idx].duration;
+  timerRunning = false;
+  clearInterval(timerInterval);
+  document.querySelectorAll('.phase-btn').forEach((b,i) => b.classList.toggle('active', i === idx));
+  document.getElementById('startBtn').textContent = '▶ Start';
+  renderTimer();
+}
+
+function renderTimer() {
+  const mins = Math.floor(timeLeft / 60).toString().padStart(2,'0');
+  const secs = (timeLeft % 60).toString().padStart(2,'0');
+  const disp = document.getElementById('timerDisplay');
+  disp.textContent = `${mins}:${secs}`;
+  disp.className = 'timer-display';
+  const pct = timeLeft / PHASES[currentPhase].duration;
+  if (pct < 0.1) disp.classList.add('danger');
+  else if (pct < 0.25) disp.classList.add('warning');
+  document.getElementById('timerPhaseName').textContent = PHASES[currentPhase].name;
+}
+
+function startTimer() {
+  if (timerRunning) return;
+  timerRunning = true;
+  document.getElementById('startBtn').textContent = '▶ Running';
+  timerInterval = setInterval(() => {
+    if (timeLeft <= 0) {
+      clearInterval(timerInterval);
+      timerRunning = false;
+      document.getElementById('startBtn').textContent = '▶ Start';
+      document.getElementById('timerDisplay').textContent = '0:00';
+      return;
+    }
+    timeLeft--;
+    renderTimer();
+  }, 1000);
+}
+
+function pauseTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  document.getElementById('startBtn').textContent = '▶ Resume';
+}
+
+function resetTimer() {
+  clearInterval(timerInterval);
+  timerRunning = false;
+  timeLeft = PHASES[currentPhase].duration;
+  document.getElementById('startBtn').textContent = '▶ Start';
+  renderTimer();
+}
+
+// ─── SCORING UI ─────────────────────────────────────────
+function buildScoringUI() {
+  const grid = document.getElementById('scoringGrid');
+  grid.innerHTML = '';
+
+  TEAMS.forEach((team, ti) => {
+    const card = document.createElement('div');
+    card.className = 'scoring-card';
+
+    let judgesHTML = JUDGES.map((judge, ji) => `
+      <div class="judge-section">
+        <div class="judge-section-title">🦈 ${judge}</div>
+        <div class="scoring-categories">
+          ${CATEGORIES.map((cat, ci) => `
+            <div class="score-input-group">
+              <div class="score-label">${cat}</div>
+              <div class="score-stars" id="stars-${ti}-${ji}-${ci}">
+                ${[1,2,3,4,5].map(v => `
+                  <div class="star${scores[ti][ji][ci] >= v ? ' active' : ''}"
+                       onclick="setScore(${ti},${ji},${ci},${v})">★</div>
+                `).join('')}
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `).join('');
+
+    card.innerHTML = `
+      <div class="scoring-card-header">
+        <span style="font-size:28px">${team.emoji}</span>
+        <div class="scoring-team-name">${team.name}</div>
+      </div>
+      ${judgesHTML}
+      <div class="team-total">
+        <div class="team-total-label">Total Score</div>
+        <div class="team-total-score" id="total-${ti}">${getTeamTotal(ti)}</div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function setScore(ti, ji, ci, val) {
+  scores[ti][ji][ci] = val;
+  // re-render stars for this group
+  const container = document.getElementById(`stars-${ti}-${ji}-${ci}`);
+  container.querySelectorAll('.star').forEach((star, i) => {
+    star.classList.toggle('active', i < val);
+  });
+  // update totals
+  const totalEl = document.getElementById(`total-${ti}`);
+  if (totalEl) totalEl.textContent = getTeamTotal(ti);
+  renderLeaderboard();
+}
+
+function getTeamTotal(ti) {
+  return scores[ti].reduce((sum, judge) => sum + judge.reduce((s, v) => s + v, 0), 0);
+}
+
+// ─── LEADERBOARD ────────────────────────────────────────
+function renderLeaderboard() {
+  const sorted = TEAMS.map((t, i) => ({ ...t, idx: i, total: getTeamTotal(i) }))
+    .sort((a, b) => b.total - a.total);
+
+  const lb = document.getElementById('leaderboard');
+  lb.innerHTML = sorted.map((t, rank) => {
+    const breakdown = JUDGES.map((j, ji) =>
+      `${j}: ${scores[t.idx][ji].reduce((s,v)=>s+v,0)}`
+    ).join(' · ');
+    return `
+      <div class="lb-row${rank === 0 ? ' first' : ''}">
+        <div class="lb-rank">${rank + 1}</div>
+        <div class="lb-team">
+          <div class="lb-team-name">${t.emoji} ${t.name}</div>
+          <div class="lb-team-members">${t.members.join(', ')}</div>
+          <div class="lb-breakdown">${breakdown}</div>
+        </div>
+        <div class="lb-score">${t.total}</div>
+      </div>
+    `;
+  }).join('');
+
+  // winner banner only if scores exist
+  const hasScores = TEAMS.some((_,i) => getTeamTotal(i) > 0);
+  const banner = document.getElementById('winnerBanner');
+  if (hasScores && sorted[0].total > 0) {
+    banner.classList.add('show');
+    document.getElementById('winnerName').textContent = `${sorted[0].emoji} ${sorted[0].name}`;
+    document.getElementById('winnerScore').textContent = `${sorted[0].total} points`;
+  } else {
+    banner.classList.remove('show');
+  }
+}
+
+function resetAll() {
+  if (!confirm('Reset all scores?')) return;
+  scores = TEAMS.map(() => JUDGES.map(() => CATEGORIES.map(() => 0)));
+  buildScoringUI();
+  renderLeaderboard();
+}
+
+// ─── CONFETTI ────────────────────────────────────────────
+function triggerConfetti() {
+  const colors = ['#f5c518','#3b82f6','#a855f7','#2dc653','#e63946','#ffffff'];
+  for (let i = 0; i < 80; i++) {
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.style.cssText = `
+      left: ${Math.random() * 100}vw;
+      background: ${colors[Math.floor(Math.random() * colors.length)]};
+      border-radius: ${Math.random() > .5 ? '50%' : '2px'};
+      animation-duration: ${1.5 + Math.random() * 2}s;
+      animation-delay: ${Math.random() * .5}s;
+      width: ${6 + Math.random() * 10}px;
+      height: ${6 + Math.random() * 10}px;
+    `;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 3500);
+  }
+}
+
+// ─── NAV ─────────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (name === 'leaderboard') renderLeaderboard();
+}
+
+// ─── INIT ────────────────────────────────────────────────
+renderTimer();
+buildScoringUI();
+renderLeaderboard();
+</script>
+</body>
+</html>
